@@ -18,4 +18,7 @@ const Route = use('Route')
 
 Route.group(() => {
 	Route.post('registration', 'loginController.registration')
+	Route.post('login', 'loginController.login')
+	Route.get('dataUser', 'loginController.dataUser')
+	Route.post('logout', 'loginController.logout').middleware('auth')
 }).prefix('auth').namespace('Auth')
