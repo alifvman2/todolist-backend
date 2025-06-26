@@ -22,3 +22,7 @@ Route.group(() => {
 	Route.get('dataUser', 'loginController.dataUser')
 	Route.post('logout', 'loginController.logout').middleware('auth')
 }).prefix('auth').namespace('Auth')
+
+Route.group(() => {
+	Route.get('getBoard', 'TranController.getBoard')
+}).prefix('trans').namespace('Trans').middleware('auth')

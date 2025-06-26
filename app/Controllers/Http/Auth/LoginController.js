@@ -9,14 +9,13 @@ class LoginController {
 	async registration({ request, auth, response }) 
 	{
 
-		const Inputs = request.only(['email', 'password'])
+		const { email, password } = request.only(['email', 'password'])
 
-		Inputs.password = await Hash.make(Inputs.password)
-		Inputs.username = Inputs.email
+		const hashedPassword = await Hash.make(password)
 
 		const cek = await Database
 			.table('users')
-			.where('email', Inputs.email)
+			.where('email', email)
 			.first()
 
 		if (cek) {
@@ -26,7 +25,11 @@ class LoginController {
 		}
 
 	    try {
-      		const user = await User.create(Inputs)
+      		const user = await User.create({
+			    email,
+			    username: email, // bisa diganti kalau kamu pakai input username sendiri
+			    password: hashedPassword
+		  	})
     		
     		const token = await auth.generate(user)
 
@@ -46,13 +49,14 @@ class LoginController {
 
 	async login({ request, auth, response }) 
 	{
-	
+
 		const { email, password } = request.only(['email', 'password'])
 
 		try {
+
 			const token = await auth.attempt(email, password)
 
-			const user = await User.findBy('email', email)
+			const user = await auth.user
 
 			return response.status(200).json({
 				message: 'Login successful',
@@ -62,6 +66,7 @@ class LoginController {
 				  	email: user.email
 				}
 			})
+		
 		} catch (error) {
 		  	return response.status(400).json({
 			    message: 'Login failed',
