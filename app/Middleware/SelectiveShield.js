@@ -1,17 +1,25 @@
 'use strict'
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+
+const ShieldMiddleware = use('Adonis/Middleware/Shield')
+const Config = use('Config')
 
 class SelectiveShield {
-  /**
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Function} next
-   */
-  async handle ({ request }, next) {
-    // call next to advance the request
-    await next()
+  async handle(ctx, next) {
+    const url = ctx.request.url()
+
+    // UNTUK BANYAK ROUTE
+    // const exemptPaths = ['/auth', '/tasks']
+
+    // if (exemptPaths.some(path => url.startsWith(path))) {
+      // return next()
+    // }
+
+    if (url.startsWith('/auth')) {
+      return next()
+    }
+
+    const shield = new ShieldMiddleware(Config)
+    return shield.handle(ctx, next)
   }
 }
 
