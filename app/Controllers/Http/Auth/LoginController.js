@@ -11,8 +11,6 @@ class LoginController {
 
 		const { email, password } = request.only(['email', 'password'])
 
-		const hashedPassword = await Hash.make(password)
-
 		const cek = await Database
 			.table('users')
 			.where('email', email)
@@ -27,8 +25,8 @@ class LoginController {
 	    try {
       		const user = await User.create({
 			    email,
-			    username: email, // bisa diganti kalau kamu pakai input username sendiri
-			    password: hashedPassword
+			    username: email,
+			    password: password
 		  	})
     		
     		const token = await auth.generate(user)
@@ -54,9 +52,8 @@ class LoginController {
 
 		try {
 
-			const token = await auth.attempt(email, password)
-
-			const user = await auth.user
+	      const token = await auth.authenticator('jwt').attempt(email, password)
+	      const user = await User.findBy('email', email)
 
 			return response.status(200).json({
 				message: 'Login successful',
@@ -73,17 +70,6 @@ class LoginController {
 			    error: 'Invalid email or password'
 		  	})
 		}
-
-	}
-
-	async dataUser({ request, response }) 
-	{
-
-		const data = await Database
-		  .table('users')
-		  .select('*')
-
-		return response.json(data)
 
 	}
 

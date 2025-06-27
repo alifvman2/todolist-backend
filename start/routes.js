@@ -25,4 +25,6 @@ Route.group(() => {
 
 Route.group(() => {
 	Route.get('getBoard', 'TranController.getBoard')
-}).prefix('trans').namespace('Trans').middleware('auth')
+	Route.get('getList', 'TranController.getList')
+	Route.post('storeList', 'TranController.storeList')
+}).prefix('trans').middleware('auth')
