@@ -82,7 +82,7 @@ class TranController {
 		const { id, name } = request.only(['id', 'name'])
 
 		try {
-			
+
 		    const user = auth.user
 
 		    const list = await TList.create({
